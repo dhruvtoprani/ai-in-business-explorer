@@ -28,28 +28,6 @@
         <button class="chip" data-preset="configs" type="button">Config rankings</button>
       </div>
     </div>
-
-    <div class="hero-grid">
-      <div class="stat-card">
-        <span class="label">Run logs</span>
-        <strong id="summaryRuns">0</strong>
-      </div>
-      <div class="stat-card">
-        <span class="label">Config archives</span>
-        <strong id="summaryConfigs">0</strong>
-      </div>
-      <div class="stat-card">
-        <span class="label">Models</span>
-        <strong id="summaryModels">0</strong>
-      </div>
-      <label class="mode-toggle stat-card" for="a11yModeToggle">
-        <input id="a11yModeToggle" type="checkbox" />
-        <span>
-          <strong>Accessible color mode</strong>
-          <small>Color-blind-safe palette and higher contrast</small>
-        </span>
-      </label>
-    </div>
   </header>
 
   <main class="shell">
@@ -58,6 +36,14 @@
         <h2>Controls</h2>
         <button class="ghost" id="randomPaletteBtn" type="button">Shuffle palette</button>
       </div>
+
+      <label class="mode-toggle mode-toggle-inline" for="a11yModeToggle">
+        <input id="a11yModeToggle" type="checkbox" />
+        <span>
+          <strong>Accessible color mode</strong>
+          <small>Color-blind-safe palette and higher contrast</small>
+        </span>
+      </label>
 
       <div class="control-group">
         <label for="scopeSelect">Dataset scope</label>

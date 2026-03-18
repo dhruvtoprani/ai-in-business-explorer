@@ -47,9 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const els = {
-    summaryRuns: document.getElementById("summaryRuns"),
-    summaryConfigs: document.getElementById("summaryConfigs"),
-    summaryModels: document.getElementById("summaryModels"),
     scopeSelect: document.getElementById("scopeSelect"),
     chartTypeSelect: document.getElementById("chartTypeSelect"),
     statSelect: document.getElementById("statSelect"),
@@ -350,9 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateHero() {
-    els.summaryRuns.textContent = fmt(data.summary.runs);
-    els.summaryConfigs.textContent = fmt(data.summary.config_archives);
-    els.summaryModels.textContent = fmt(Object.keys(data.summary.models).length);
+    return;
   }
 
   function updateSelectors() {
