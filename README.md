@@ -36,6 +36,19 @@ Then visit:
 http://localhost:8000
 ```
 
+## GitHub Pages
+
+This repo includes a GitHub Actions workflow at `.github/workflows/pages.yml`.
+
+To enable publishing:
+
+1. Open the repository on GitHub.
+2. Go to `Settings` > `Pages`.
+3. Set the source to `GitHub Actions`.
+4. Push to `main` or run the `Deploy GitHub Pages` workflow manually.
+
+The workflow publishes the site from the repository root and includes a `.nojekyll` marker for static assets.
+
 ## Included Views
 
 - Run logs
