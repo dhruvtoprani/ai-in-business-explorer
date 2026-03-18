@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Business Explorer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="data/ai_business_dataset.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="bg bg-a"></div>
+  <div class="bg bg-b"></div>
+  <div class="bg bg-c"></div>
+
+  <header class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">AI in Business Datasets</div>
+      <h1>Interactive explorer for agent runs, control families, and skill-based subtasks</h1>
+      <p>
+        Inspect the collected maze-simulation archive through colorful charts, filters, and ranked summaries.
+        Compare model families, feedback settings, and token costs without leaving the browser.
+      </p>
+      <div class="hero-actions">
+        <button class="chip primary" data-preset="overview" type="button">Overview</button>
+        <button class="chip" data-preset="feedback" type="button">Feedback family</button>
+        <button class="chip" data-preset="control" type="button">Control view</button>
+        <button class="chip" data-preset="configs" type="button">Config rankings</button>
+      </div>
+    </div>
+
+    <div class="hero-grid">
+      <div class="stat-card">
+        <span class="label">Run logs</span>
+        <strong id="summaryRuns">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="label">Config archives</span>
+        <strong id="summaryConfigs">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="label">Models</span>
+        <strong id="summaryModels">0</strong>
+      </div>
+      <label class="mode-toggle stat-card" for="a11yModeToggle">
+        <input id="a11yModeToggle" type="checkbox" />
+        <span>
+          <strong>Accessible color mode</strong>
+          <small>Color-blind-safe palette and higher contrast</small>
+        </span>
+      </label>
+    </div>
+  </header>
+
+  <main class="shell">
+    <aside class="panel controls">
+      <div class="panel-head">
+        <h2>Controls</h2>
+        <button class="ghost" id="randomPaletteBtn" type="button">Shuffle palette</button>
+      </div>
+
+      <div class="control-group">
+        <label for="scopeSelect">Dataset scope</label>
+        <select id="scopeSelect"></select>
+      </div>
+
+      <div class="grid-2">
+        <div class="control-group">
+          <label for="chartTypeSelect">Chart type</label>
+          <select id="chartTypeSelect"></select>
+        </div>
+        <div class="control-group">
+          <label for="statSelect">Statistic</label>
+          <select id="statSelect">
+            <option value="mean">Mean</option>
+            <option value="median">Median</option>
+            <option value="sum">Sum</option>
+            <option value="count">Count</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="control-group">
+          <label for="xFieldSelect">X field</label>
+          <select id="xFieldSelect"></select>
+        </div>
+        <div class="control-group">
+          <label for="yFieldSelect">Y field</label>
+          <select id="yFieldSelect"></select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="control-group">
+          <label for="groupFieldSelect">Group / color</label>
+          <select id="groupFieldSelect"></select>
+        </div>
+        <div class="control-group">
+          <label for="sizeFieldSelect">Size field</label>
+          <select id="sizeFieldSelect"></select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="control-group">
+          <label for="paletteSelect">Palette</label>
+          <select id="paletteSelect"></select>
+        </div>
+        <div class="control-group">
+          <label for="topNInput">Top N</label>
+          <input id="topNInput" type="range" min="5" max="80" step="1" value="20" />
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="control-group">
+          <label for="modelFilter">Model</label>
+          <select id="modelFilter"></select>
+        </div>
+        <div class="grid-2">
+          <div class="control-group">
+            <label for="feedbackFilter">Feedback</label>
+            <select id="feedbackFilter"></select>
+          </div>
+          <div class="control-group">
+            <label for="gridFilter">Grid</label>
+            <select id="gridFilter"></select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="control-group">
+            <label for="varietyFilter">Variety</label>
+            <select id="varietyFilter"></select>
+          </div>
+          <div class="control-group">
+            <label for="densityFilter">Density</label>
+            <select id="densityFilter"></select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="searchInput">Search config or run ID</label>
+          <input id="searchInput" type="text" placeholder="gpt-5-mini_grid6..." />
+        </div>
+        <label class="checkbox">
+          <input id="controlOnlyToggle" type="checkbox" />
+          <span>Restrict to matched control family</span>
+        </label>
+      </div>
+
+      <div class="panel-foot">
+        <button class="chip primary" id="exportCsvBtn" type="button">Export current view</button>
+        <button class="chip" id="resetBtn" type="button">Reset filters</button>
+      </div>
+    </aside>
+
+    <section class="panel viz">
+      <div class="panel-head">
+        <h2>Visualization</h2>
+        <div class="meta" id="vizMeta">Loading…</div>
+      </div>
+
+      <div class="kpi-row" id="kpiRow"></div>
+
+      <div class="chart-box">
+        <div class="chart-toolbar">
+          <div class="legend" id="legend"></div>
+          <div class="hint" id="chartHint"></div>
+        </div>
+        <div class="chart-stage">
+          <svg id="chartSvg" viewBox="0 0 980 560" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="tooltip" id="tooltip" hidden></div>
+        </div>
+      </div>
+
+      <div class="table-shell">
+        <div class="table-head">
+          <h3>Current rows</h3>
+          <div id="tableMeta"></div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-shell correlation-shell">
+        <div class="table-head">
+          <h3>Correlation matrix</h3>
+          <div class="table-note">Pearson coefficients across core run metrics</div>
+        </div>
+        <div class="table-scroll correlation-scroll">
+          <div id="corrGrid" class="corr-grid"></div>
+        </div>
+      </div>
+
+      <section class="panel insights-below">
+        <div class="panel-head">
+          <h2>Insights</h2>
+          <span class="subtle">Choose a section to display</span>
+        </div>
+
+        <div class="insight-menu">
+          <label for="insightViewSelect">Display</label>
+          <select id="insightViewSelect">
+            <option value="overview">Overview</option>
+            <option value="model">Model summary</option>
+            <option value="control">Feedback family</option>
+            <option value="tokens">Top configs</option>
+          </select>
+        </div>
+
+        <div class="insight-pane">
+          <div class="callout" id="overviewPanel">
+            <div class="callout-title">What this dataset is for</div>
+            <p>
+              Comparing model families, feedback conditions, and skills-based subtasks inside a controlled simulation platform.
+            </p>
+          </div>
+
+          <div class="mini-table" id="modelPanel">
+            <div class="mini-title">Model summary</div>
+            <table id="modelSummaryTable"></table>
+          </div>
+
+          <div class="mini-table" id="controlPanel">
+            <div class="mini-title">Feedback family</div>
+            <table id="controlFamilyTable"></table>
+          </div>
+
+          <div class="mini-table" id="tokenPanel">
+            <div class="mini-title">Top configs by tokens</div>
+            <table id="tokenRankTable"></table>
+          </div>
+
+          <div class="mini-table" id="correlationPanel">
+            <div class="mini-title">Correlation matrix</div>
+            <div id="corrGrid" class="corr-grid"></div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <aside class="panel insights">
+      <div class="panel-head">
+        <h2>Focus</h2>
+        <span class="subtle">Clicked point details</span>
+      </div>
+
+      <div class="panel-head panel-head-inline">
+        <div class="control-group compact">
+          <label for="sideViewSelect">View</label>
+          <select id="sideViewSelect">
+            <option value="selection">Clicked point</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="selection-shell">
+        <div class="selection" id="selectionPanel">Click a mark in the chart to inspect the row.</div>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>
